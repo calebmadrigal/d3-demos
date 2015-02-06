@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>D3 Test 1</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-weight: 100;
+      font-size: 3em;
+    }
+  </style>
+</head>
+<body>
+  <div id="trippy-text"></div>
+  <script type="text/javascript">
+    var text = "Not all those who wander are lost";
+    var letters = d3.select("#trippy-text").selectAll("span")
+      .data(text.split(''))
+      .enter()
+      .append('span')
+      .text(function (val) { return val; })
+      .style("color", function() {
+        return "hsl(" + Math.random() * 360 + ",50%,65%)";
+      });
+  </script>
+</body>
+</html>
