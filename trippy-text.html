@@ -11,6 +11,7 @@
       font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
       font-weight: 100;
       font-size: 3em;
+      margin-top: 50px;
     }
   </style>
 </head>
@@ -18,14 +19,25 @@
   <div id="trippy-text"></div>
   <script type="text/javascript">
     var text = "Not all those who wander are lost";
-    var letters = d3.select("#trippy-text").selectAll("span")
+    d3.select("#trippy-text").selectAll("span")
       .data(text.split(''))
       .enter()
       .append('span')
-      .text(function (val) { return val; })
-      .style("color", function() {
-        return "hsl(" + Math.random() * 360 + ",50%,65%)";
-      });
+      .text(function (val) { return val; });
+
+
+    function update() {
+      var randomColors = d3.range(text.length).map(function (n) { return Math.random() * 360; });
+      var spans = d3.selectAll("span")
+        .data(randomColors)
+        .transition()
+        .delay(150)
+        .style("color", function(d, i) {
+          return "hsl(" + d + ",100%,50%)";
+        });
+    }
+
+    setInterval(update, 100);
   </script>
 </body>
 </html>
