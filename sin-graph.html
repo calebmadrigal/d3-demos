@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>D3 Test 1</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 50px;
+    }
+    svg {
+      /* border: 1px #cccccc solid; */
+    }
+  </style>
+</head>
+<body>
+  <script type="text/javascript">
+    var width = 700;
+    var height = 500;
+
+    var linspace = function(start, stop, num_samples) {
+      return d3.range(start, stop * (num_samples / (stop-start)))
+        .map(function (n) { return n / (num_samples / (stop-start)); });
+    };
+
+    var x = linspace(0, 20, 500);
+    var y = x.map(function (i) { return ((height/2)-50) * Math.sin(i); });
+
+    var x_step = width / x.length;
+    var y_middle = height / 2;
+
+    var radius = 100;
+    var fill = '#F012BE';
+
+    d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+    
+    d3.select('svg').selectAll('circle')
+      .data(y)
+      .enter()
+      .append('circle')
+      .attr({r: 2, fill: fill})
+      .attr('cx', function (d, i) {
+        return x_step * i;
+      })
+      .attr('cy', function (d, i) {
+        return y_middle - d;
+      });
+  </script>
+</body>
+</html>
