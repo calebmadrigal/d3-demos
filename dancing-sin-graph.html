@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>d3 sin graph</title>
+  <title>d3 dancing sin graph</title>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
   <style>
     body {
@@ -25,8 +25,9 @@
         .map(function (n) { return n / (num_samples / (stop-start)); });
     };
 
+    var direction = 1;
     var x = linspace(0, 20, 500);
-    var y = x.map(function (i) { return ((height/2)-50) * Math.sin(i); });
+    var y = x.map(function (i) { return ((height/2)-50) * direction * Math.sin(i); });
 
     var x_step = width / x.length;
     var y_middle = height / 2;
@@ -49,6 +50,26 @@
       .attr('cy', function (d, i) {
         return y_middle - d;
       });
+
+    function invert() {
+      direction = direction * -1;
+      y = x.map(function (i) { return ((height/2)-50) * direction * Math.sin(i); });
+
+      d3.selectAll('circle')
+        .data(y)
+        .transition()
+        .duration(1000)
+        .attr({r: 2, fill: fill})
+        .attr('cx', function (d, i) {
+          return x_step * i;
+        })
+        .attr('cy', function (d, i) {
+          return y_middle - d;
+        });
+    }
+
+    // Make the interval just less than the transition duration so motion never stops
+    setInterval(invert, 900);
   </script>
 </body>
 </html>
