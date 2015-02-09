@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>d3 sin graph</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0px;
+    }
+    svg {
+      border: 1px #cccccc solid;
+    }
+  </style>
+</head>
+<body>
+  <script type="text/javascript">
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var maxRadius = height / 10;
+    var maxCircles = 50;
+
+    var circles = [];
+
+    var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    function randomCircle() {
+      return {'cx': Math.random() * width,
+              'cy': Math.random() * height,
+              'r': Math.random() * maxRadius,
+              'fill': "hsl(" + Math.random() * 360 + ",50%,50%)" };
+    }
+
+    var iterations = 0;
+    function update() {
+      iterations++;
+
+      if (circles.length < maxCircles) {
+        circles.push(randomCircle());
+
+        d3.select('svg').selectAll('circle')
+          .data(circles)
+          .enter()
+          .append('circle')
+          .attr('cx', function (d) { return d['cx']; })
+          .attr('cy', function (d) { return d['cy']; })
+          .attr('r', function (d) { return d['r']; })
+          .attr('fill', function (d) { return d['fill']; });
+      }
+
+      if (iterations % 10 == 0) {
+        maxCircles++;
+        circles = circles.map(function (c) {
+          c.cx = Math.random() * width;
+          c.cy = Math.random() * height;
+          c.r = Math.random() * maxRadius;
+          return c;
+        });
+
+        // Remove circles that have no radius, or are outside the window (for efficiency)
+        circles = circles.filter(function (c) {
+          return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
+        });
+
+        d3.selectAll('circle')
+          .data(circles)
+          .transition()
+          .duration(1000)
+          .attr('cx', function (d) { return d['cx']; })
+          .attr('cy', function (d) { return d['cy']; })
+          .attr('r', function (d) { return d['r']; });
+      }
+    }
+
+    setInterval(update, 100);
+  </script>
+</body>
+</html>
