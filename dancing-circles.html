@@ -75,7 +75,7 @@
       allCircles.exit().remove();
 
       // Actually move the circles in the SVG in correspondence to the data changes
-      allCircles.transition().duration(1000)
+      allCircles.transition().ease('elastic').duration(1000)
         .attr('cx', function (d) { return d['cx']; })
         .attr('cy', function (d) { return d['cy']; })
         .attr('r', function (d) { return d['r']; });
