@@ -53,11 +53,6 @@
         return c;
       });
 
-      // Remove circles that have no radius, or are outside the window (for efficiency)
-      circles = circles.filter(function (c) {
-        return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
-      });
-
       //////////// UPDATE SVG
 
       // circles array -> SVG data binding
@@ -65,23 +60,28 @@
         .data(circles);
 
       // Add new circles into the SVG
-      allCircles.enter().append('circle')
-        .attr('cx', function (d) { return d['cx']; })
-        .attr('cy', function (d) { return d['cy']; })
-        .attr('r', function (d) { return d['r']; })
-        .attr('fill', function (d) { return d['fill']; });
+      //
+      // Note: Can't use allCircles selector because the radius transition would be
+      // overwritten by the moving transition below, so we must use a different selector.
+      svg.selectAll('circle').data(circles).enter().append('circle')
+        .attr('cx', function (d) { return d.cx; })
+        .attr('cy', function (d) { return d.cy; })
+        .attr('fill', function (d) { return d.fill; })
+        .attr({'r': 0})
+        .transition().duration(1000).ease('elastic')
+        .attr('r', function (d) { return d.r; });
+        
 
       // Remove circles from the SVG when they are removed from the circles data
       allCircles.exit().remove();
 
       // Actually move the circles in the SVG in correspondence to the data changes
-      allCircles.transition().ease('elastic').duration(1000)
-        .attr('cx', function (d) { return d['cx']; })
-        .attr('cy', function (d) { return d['cy']; })
-        .attr('r', function (d) { return d['r']; });
+      allCircles.transition().ease('elastic').duration(1200)
+        .attr('cx', function (d) { return d.cx; })
+        .attr('cy', function (d) { return d.cy; })
     }
 
-    setInterval(update, 1000);
+    setInterval(update, 1200);
   </script>
 </body>
 </html>
