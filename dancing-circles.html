@@ -21,12 +21,8 @@
     var height = window.innerHeight;
     var maxRadius = height / 10;
     var maxCircles = 50;
-
+    var iterations = 0;
     var circles = [];
-
-    var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height);
 
     function randomCircle() {
       return {'cx': Math.random() * width,
@@ -35,14 +31,34 @@
               'fill': "hsl(" + Math.random() * 360 + ",50%,50%)" };
     }
 
-    var iterations = 0;
+    var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
     function update() {
       iterations++;
+
+      //////////// UPDATE DATA
 
       // Insert more circles into the data
       if (circles.length < maxCircles) {
         circles.push(randomCircle());
       }
+
+      // Change position and radius in circle data
+      circles = circles.map(function (c) {
+        c.cx = Math.random() * width;
+        c.cy = Math.random() * height;
+        c.r = Math.random() * maxRadius;
+        return c;
+      });
+
+      // Remove circles that have no radius, or are outside the window (for efficiency)
+      circles = circles.filter(function (c) {
+        return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
+      });
+
+      //////////// UPDATE SVG
 
       // circles array -> SVG data binding
       var allCircles = svg.selectAll('circle')
@@ -57,19 +73,6 @@
 
       // Remove circles from the SVG when they are removed from the circles data
       allCircles.exit().remove();
-
-      // Change position and radius in circle data
-      circles = circles.map(function (c) {
-        c.cx = Math.random() * width;
-        c.cy = Math.random() * height;
-        c.r = Math.random() * maxRadius;
-        return c;
-      });
-
-      // Remove circles that have no radius, or are outside the window (for efficiency)
-      circles = circles.filter(function (c) {
-        return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
-      });
 
       // Actually move the circles in the SVG in correspondence to the data changes
       allCircles.transition().duration(1000)
