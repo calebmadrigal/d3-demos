@@ -39,44 +39,46 @@
     function update() {
       iterations++;
 
+      // Insert more circles into the data
       if (circles.length < maxCircles) {
         circles.push(randomCircle());
-
-        d3.select('svg').selectAll('circle')
-          .data(circles)
-          .enter()
-          .append('circle')
-          .attr('cx', function (d) { return d['cx']; })
-          .attr('cy', function (d) { return d['cy']; })
-          .attr('r', function (d) { return d['r']; })
-          .attr('fill', function (d) { return d['fill']; });
       }
 
-      if (iterations % 10 == 0) {
-        maxCircles++;
-        circles = circles.map(function (c) {
-          c.cx = Math.random() * width;
-          c.cy = Math.random() * height;
-          c.r = Math.random() * maxRadius;
-          return c;
-        });
+      // circles array -> SVG data binding
+      var allCircles = svg.selectAll('circle')
+        .data(circles);
 
-        // Remove circles that have no radius, or are outside the window (for efficiency)
-        circles = circles.filter(function (c) {
-          return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
-        });
+      // Add new circles into the SVG
+      allCircles.enter().append('circle')
+        .attr('cx', function (d) { return d['cx']; })
+        .attr('cy', function (d) { return d['cy']; })
+        .attr('r', function (d) { return d['r']; })
+        .attr('fill', function (d) { return d['fill']; });
 
-        d3.selectAll('circle')
-          .data(circles)
-          .transition()
-          .duration(1000)
-          .attr('cx', function (d) { return d['cx']; })
-          .attr('cy', function (d) { return d['cy']; })
-          .attr('r', function (d) { return d['r']; });
-      }
+      // Remove circles from the SVG when they are removed from the circles data
+      allCircles.exit().remove();
+
+      // Change position and radius in circle data
+      circles = circles.map(function (c) {
+        c.cx = Math.random() * width;
+        c.cy = Math.random() * height;
+        c.r = Math.random() * maxRadius;
+        return c;
+      });
+
+      // Remove circles that have no radius, or are outside the window (for efficiency)
+      circles = circles.filter(function (c) {
+        return c.r > 0 && c.cx > (-1*c.r) && c.cx < width+c.r && c.cy > (-1*c.r) && c.cy < height+c.r;
+      });
+
+      // Actually move the circles in the SVG in correspondence to the data changes
+      allCircles.transition().duration(1000)
+        .attr('cx', function (d) { return d['cx']; })
+        .attr('cy', function (d) { return d['cy']; })
+        .attr('r', function (d) { return d['r']; });
     }
 
-    setInterval(update, 100);
+    setInterval(update, 1000);
   </script>
 </body>
 </html>
